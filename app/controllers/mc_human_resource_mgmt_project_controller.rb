@@ -16,7 +16,9 @@ class McHumanResourceMgmtProjectController < ApplicationController
     stringSqlProjectsSubProjects = tool.return_ids(@project.id)    
     
     # total issues from the project and subprojects
-    @totalIssues = Issue.where(:project_id => [stringSqlProjectsSubProjects]).count
+    # @totalIssues = Issue.where(:project_id => [stringSqlProjectsSubProjects]).count
+    @all_project_issues = Issue.find_by_sql("select * from issues where project_id in (#{stringSqlProjectsSubProjects});")
+    @totalIssues = @all_project_issues.count
 
     @statusesByAssigneds = Issue.find_by_sql("select assigned_to_id, (select firstname from users where id = assigned_to_id) as assigned_first_name, (select lastname from users where id = assigned_to_id) as assigned_last_name,
                                               issue_statuses.id, issue_statuses.name, 
